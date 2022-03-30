@@ -52,6 +52,7 @@
 
 #pragma once
 
+#include <thread>
 
 //==============================================================================
 /** A demo synth sound that's just a basic sine wave.. */
@@ -376,10 +377,10 @@ private:
               delayAttachment      (owner.state, "delay", delaySlider)
         {
             // add some sliders..
-            addAndMakeVisible (gainSlider);
+            //addAndMakeVisible (gainSlider);
             gainSlider.setSliderStyle (Slider::Rotary);
 
-            addAndMakeVisible (delaySlider);
+            //addAndMakeVisible (delaySlider);
             delaySlider.setSliderStyle (Slider::Rotary);
 
             // add some labels for the sliders..
@@ -390,10 +391,10 @@ private:
             delayLabel.setFont (Font (11.0f));
 
             // add the midi keyboard component..
-            addAndMakeVisible (midiKeyboard);
+            //addAndMakeVisible (midiKeyboard);
 
             // add a label that will display the current timecode and status..
-            addAndMakeVisible (timecodeDisplayLabel);
+            //addAndMakeVisible (timecodeDisplayLabel);
             timecodeDisplayLabel.setFont (Font (Font::getDefaultMonospacedFontName(), 15.0f, Font::plain));
 
             // set resize limits for this plug-in
@@ -418,10 +419,20 @@ private:
         ~JuceDemoPluginAudioProcessorEditor() override {}
 
         //==============================================================================
+        void mouseUp(const MouseEvent& event) override
+        {
+            isWide = !isWide;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            setSize(isWide ? 600 : 400, 300);
+        }
+        
         void paint (Graphics& g) override
         {
-            g.setColour (backgroundColour);
+            g.setColour (juce::Colours::blue);
             g.fillAll();
+            g.setColour(juce::Colours::white);
+            g.setFont(15.f);
+            g.drawFittedText (isWide ? "Wide" : "Small", getLocalBounds(), juce::Justification::centred, 1);
         }
 
         void resized() override
@@ -474,6 +485,7 @@ private:
         }
 
     private:
+        bool isWide{false};
         MidiKeyboardComponent midiKeyboard;
 
         Label timecodeDisplayLabel,
